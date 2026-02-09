@@ -28,7 +28,7 @@
 ---
 
 ## 项目结构
-
+```text
 Application/
 ├── CMakeLists.txt
 ├── src/
@@ -42,5 +42,5 @@ Application/
     └── components/
         ├── icons.slint
         └── title.slint
-
+```
 
