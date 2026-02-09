@@ -1,6 +1,6 @@
 # Slint 无边框窗口 Demo（Windows）
 
-这是一个基于 **Slint + C++** 的 Windows 桌面 Demo，演示如何在 **Slint UI 框架中实现原生 Win32 风格的无边框窗口**，并保留系统级 **DWM 阴影效果**。
+基于 **Slint + C++** 的 Windows 桌面 Demo，演示如何在 **Slint UI 框架中实现原生 Win32 风格的无边框窗口**，并保留系统级 **DWM 阴影效果**。
 
 ---
 ## UI
@@ -29,7 +29,8 @@
 
 ## 项目结构
 
-MyCoolApp/
+``text
+Application/
 ├─ CMakeLists.txt
 ├─ src/
 │  ├─ main.cpp
@@ -37,12 +38,10 @@ MyCoolApp/
 │     ├─ EnableWindowShadow.h
 │     └─ EnableWindowShadow.cpp
 └─ ui/
-│  ├─ main.slint
-│  ├─ theme.slint
-│  └─ components/
-│     ├─ icons.slint
-│     └─ title.slint
-├─ main.slint
-└─ theme.slint
+   ├─ main.slint
+   ├─ theme.slint
+   └─ components/
+      ├─ icons.slint
+      └─ title.slint
 
 
