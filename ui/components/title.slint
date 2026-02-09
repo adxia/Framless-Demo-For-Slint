@@ -1,0 +1,71 @@
+import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { MaxIcon ,MinIcon,CloseIcon} from "./icons.slint";
+
+export component TitleBar inherits Rectangle {
+    in property <color> backgroundColor:#f3f3f3;
+    height: 40px;
+    background: root.backgroundColor; // 浅灰色背景
+    
+    // 定义回调，让 C++ 处理窗口操作
+    callback close();
+    callback minimize();
+    callback maximize();
+
+    // 1. 图标和标题
+    Image {
+        source: @image-url("logo.png"); // 如果有图标的话
+        width: 20px;
+    }
+    Text {
+        x:20px;
+        y:10px;
+        text: "Slint Application";
+        vertical-alignment: center;
+        font-weight: 700;
+        color: #333;
+    }    
+        // 最小化
+        Rectangle {
+            x:parent.width - self.width * 3 ;
+            y:0px;
+            width: 52px;
+            height:34px;
+            background: min_touch.pressed ? #e5e5e5 : min_touch.has-hover ? #e2e2e2 : transparent;
+            animate background { duration: 150ms; easing: ease-in-out; }
+            min_touch := TouchArea { clicked => { root.minimize(); } }
+            MinIcon{
+                line-color: #333;
+            }
+        }
+        
+         // 最大化
+        Rectangle {
+            x:parent.width - self.width * 2;
+            y:0px;
+            width: 52px;
+            height:34px;
+            background: max_touch.pressed ? #e5e5e5 : max_touch.has-hover ? #e2e2e2 : transparent;
+            animate background { duration: 150ms; easing: ease-in-out; }
+            max_touch := TouchArea { 
+                clicked => { root.maximize(); } 
+            }
+            MaxIcon{
+                line-color: #333;
+            }
+        }
+        // 关闭
+        Rectangle {
+            x:parent.width - self.width;
+            y:0px;
+            width: 52px;
+            height:34px;
+            background: close_touch.pressed ? #e81123 : close_touch.has-hover ? #e23928 : transparent;
+            animate background { duration: 150ms; easing: ease-in-out; }
+            close-touch := TouchArea { clicked => { root.close(); } }
+            CloseIcon{
+                line-color: close_touch.has-hover ? white : #333;
+            }
+        
+        
+    }
+}

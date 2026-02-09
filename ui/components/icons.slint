@@ -1,0 +1,51 @@
+export component MaxIcon inherits Rectangle {
+    in property <color> line-color: white;
+    width: 20px;
+    height: 20px;
+
+    Rectangle {
+        x: 4px; y: 4px;
+        width: 12px;
+        height: 12px;
+        border-width: 1px;
+        border-color: root.line-color;
+        background: transparent;
+    }
+}
+
+export component MinIcon inherits Rectangle {
+    in property <color> line-color: white;
+    width: 20px;
+    height: 20px;
+
+    Rectangle {
+        x: 4px; y: 9.5px;
+        width: 12px;
+        height: 1px;
+        border-width: 1px;
+        border-color: root.line-color;
+        background: transparent;
+    }
+}
+
+export component CloseIcon inherits Rectangle {
+    width: 12px;
+    height: 12px;
+    in property <color> line-color: white;
+    
+    Path {
+        width: 100%;
+        height: 100%;
+        stroke: root.line-color;
+        stroke-width: 1px;
+        stroke_line_cap: round;
+
+        // 第一道杠：从左上到右下
+        MoveTo { x: 2; y: 2; }
+        LineTo { x: 12; y: 12; }
+        
+        // 第二道杠：从右上到左下
+        MoveTo { x: 12; y: 2; }
+        LineTo { x: 2; y: 12; }
+    }
+}

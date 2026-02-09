@@ -1,0 +1,46 @@
+import { Button, VerticalBox } from "std-widgets.slint";
+import { TitleBar } from "./components/title.slint";
+import { Theme } from "./components/theme.slint";
+
+export component AppWindow inherits Window {
+    no-frame: true;
+    title: "";
+    preferred-width: 700px;
+    preferred-height: 580px;
+    background: #ffffff;
+
+    in-out property <string> message: "准备就绪";
+    callback request_logic_exec(string);
+    callback request_minimize();
+    callback request_close();
+    callback request_maximize();
+   
+    VerticalLayout {
+    TitleBar {
+        backgroundColor:white;
+        minimize=>{root.request_minimize() }
+        close => { root.request_close() }
+        maximize => {
+            request_maximize();
+        }
+    }
+    VerticalBox {
+        alignment: center;
+        spacing: 20px;
+
+        Text {
+            text: root.message;
+            font-size: 24px;
+            color: black;
+            horizontal-alignment: center;
+        }
+
+        Button {
+            text: "执行 C++ 逻辑";
+            clicked => {
+                root.request_logic_exec("来自 UI 的指令");
+            }
+        }
+    }
+}
+}
