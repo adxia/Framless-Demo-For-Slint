@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
         #ifdef _WIN32
                 HWND hwnd = ui->window().win32_hwnd();
                 if (hwnd) {
-                    // SW_MINIMIZE 会将窗口缩小到任务栏
+                    // SW_MINIMIZE 将窗口缩小到任务栏
                     ShowWindow(hwnd, SW_MINIMIZE);
                 }
         #endif
@@ -39,8 +39,7 @@ int main(int argc, char **argv) {
         #ifdef _WIN32
                 HWND hwnd = ui->window().win32_hwnd();
                 if (hwnd) {
-                    // 发送关闭消息，这比直接 exit(0) 更优雅
-                    // 它会让窗口走标准的销毁流程，触发 WM_CLOSE
+                    // 让窗口走标准的销毁流程，触发 WM_CLOSE
                     PostMessage(hwnd, WM_CLOSE, 0, 0);
                 }
         #else
@@ -55,16 +54,13 @@ int main(int argc, char **argv) {
             if (hwnd) {
             if (IsZoomed(hwnd)) {
                 PostMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0);
-                // ui->set_maximized(false); // 更新 UI 状态
             } else {
                 PostMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
-                // ui->set_maximized(true); // 更新 UI 状态
             
             }
     }
         #else
-                // 非 Windows 平台直接退出
-                std::exit(0);
+         
         #endif
     });
     ui->run();
