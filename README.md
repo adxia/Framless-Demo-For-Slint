@@ -29,18 +29,18 @@
 
 ## 项目结构
 
-graph TD
-    A[Application] --> B[CMakeLists.txt]
-    A --> C[src]
-    C --> C1[main.cpp]
-    C --> C2[utils]
-    C2 --> C2a[EnableWindowShadow.h]
-    C2 --> C2b[EnableWindowShadow.cpp]
-    A --> D[ui]
-    D --> D1[main.slint]
-    D --> D2[theme.slint]
-    D --> D3[components]
-    D3 --> D3a[icons.slint]
-    D3 --> D3b[title.slint]
+Application/
+├── CMakeLists.txt
+├── src/
+│   ├── main.cpp
+│   └── utils/
+│       ├── EnableWindowShadow.h
+│       └── EnableWindowShadow.cpp
+└── ui/
+    ├── main.slint
+    ├── theme.slint
+    └── components/
+        ├── icons.slint
+        └── title.slint
 
 
