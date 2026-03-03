@@ -7,6 +7,8 @@
 
 ![Application Main UI](screenshots/main.png)
 
+![Application Main UI For Dark](screenshots/main_dark.png)
+
 ## 功能特性
 
 - 无系统标题栏（Frameless Window）
