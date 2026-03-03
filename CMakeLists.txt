@@ -4,10 +4,16 @@ project(SlintApp LANGUAGES CXX)
 #设置 C++ 标准（Slint 需要 C++20 以获得最佳体验）
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
+
 set(Slint_DIR "E:/Slint/X86/Slint-X86/lib/cmake/Slint")
 add_compile_options(/utf-8)
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 #查找 Slint 库
 find_package(Slint REQUIRED)
+
 
 # 如果用户没有指定构建类型（比如没写 -DCMAKE_BUILD_TYPE）
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -18,11 +24,17 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 add_executable(SlintApp
-src/main.cpp
+    src/main.cpp
+    ${APP_ICON_RESOURCE_WINDOWS}
 )
-target_include_directories(SlintApp PRIVATE src src/utils)
+target_compile_definitions(SlintApp PRIVATE SLINT_FEATURE_EMBED_RESOURCES)
 #编译 Slint 文件
-slint_target_sources(SlintApp ui/main.slint)
+slint_target_sources(SlintApp
+    "./ui/main.slint"
+ )
+set_property(TARGET SlintApp PROPERTY SLINT_EMBED_RESOURCES embed-files)
+set_target_properties(SlintApp PROPERTIES SLINT_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/ui")
+target_include_directories(SlintApp PRIVATE src src/utils ${CMAKE_CURRENT_BINARY_DIR})
 
 # 链接 Slint 及其必要的库
 target_link_libraries(SlintApp PRIVATE Slint::Slint)

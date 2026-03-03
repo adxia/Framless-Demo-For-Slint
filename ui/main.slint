@@ -1,46 +1,82 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+
+import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { TitleBar } from "./components/title.slint";
 import { Theme } from "./components/theme.slint";
+import "font/HarmonyOS_Sans_SC_Regular.ttf";
+import "font/InterVariable.ttf";
+import "font/Awesome-7-Free-Regular-400.otf";
+import "font/bootstrap-icons.otf";
 
 export component AppWindow inherits Window {
-    no-frame: true;
+    
+    default-font-family: "HarmonyOS Sans SC";
+    no-frame: true; 
     title: "";
     preferred-width: 700px;
     preferred-height: 580px;
-    background: #ffffff;
-
+    background: Theme.active.background;
+    in-out property <bool> is-maximized:false;
     in-out property <string> message: "准备就绪";
+    property <length> btn_width:120px;
     callback request_logic_exec(string);
     callback request_minimize();
     callback request_close();
     callback request_maximize();
-   
+    
     VerticalLayout {
-    TitleBar {
-        backgroundColor:white;
-        minimize=>{root.request_minimize() }
-        close => { root.request_close() }
-        maximize => {
-            request_maximize();
-        }
-    }
-    VerticalBox {
-        alignment: center;
-        spacing: 20px;
-
-        Text {
-            text: root.message;
-            font-size: 24px;
-            color: black;
-            horizontal-alignment: center;
-        }
-
-        Button {
-            text: "执行 C++ 逻辑";
-            clicked => {
-                root.request_logic_exec("来自 UI 的指令");
+        width: 100%;
+        height: 100%;
+        alignment: start;
+        TitleBar {
+                //backgroundColor:white;
+                is-maximized:root.is-maximized;
+                minimize=>{root.request_minimize() }
+                close => { root.request_close() }
+                maximize => {
+                    request_maximize();
+                }
             }
+        HorizontalLayout {
+            alignment: start;
+            spacing: 20px;
+            padding-left: 20px;
+            padding-top: 100px;
+            VerticalLayout {
+                alignment: center;
+                spacing: 20px;
+                Text {
+                    font-family: "InterVariable";
+                    text: "C++:";
+                    font-size: 24px;
+                    color: Theme.active.text-color;
+                    horizontal-alignment:left;
+                    vertical-alignment: center;
+                }
+                Text {
+                    font-family: "bootstrap-icons";
+                    text: root.message;
+                    font-size: 24px;
+                    color:Theme.active.text-color;
+                    horizontal-alignment:left;
+                    vertical-alignment: center;
+                }
+                Button {
+                    width: root.btn_width;
+                    height: 40px;
+                    text: "笑一个";
+                    animate width {
+                        duration: 200ms;
+                        easing: ease-in-out;
+                    }
+                    clicked => {
+                        root.request_logic_exec("\u{F3f3}");
+                        root.btn_width =(root.btn_width == 120px) ? 400px : 120px;
+                    }
+                }
+            }
+            
+        
         }
-    }
+        
 }
 }

@@ -1,15 +1,44 @@
 export component MaxIcon inherits Rectangle {
     in property <color> line-color: white;
-    width: 20px;
-    height: 20px;
+    in property <bool> is-maximized: false;
 
-    Rectangle {
-        x: 4px; y: 4px;
-        width: 12px;
-        height: 12px;
-        border-width: 1px;
-        border-color: root.line-color;
-        background: transparent;
+    width: 12px;
+    height: 12px;
+
+    Path {
+        visible: !root.is-maximized;
+        width: 100%;
+        height: 100%;
+        stroke: root.line-color;
+        stroke-width: 1px;
+        fill: transparent;
+       
+        MoveTo { x: 4; y: 4; }
+        LineTo { x: 14; y: 4; }
+        LineTo { x: 14; y: 14; }
+        LineTo { x: 4; y: 14; }
+        Close {}
+    }
+
+    Path {
+        visible: root.is-maximized;
+
+        width: 100%;
+        height: 100%;
+        stroke: root.line-color;
+        stroke-width: 1px;
+        fill: transparent;
+
+        MoveTo { x: 4.5; y: 4.5; }
+        LineTo { x: 13.5; y: 4.5; }
+        LineTo { x: 13.5; y: 13.5; }
+        LineTo { x: 4.5; y: 13.5; }
+        Close {}
+
+        MoveTo { x: 6.5; y: 2.5; }
+        LineTo { x: 15.5; y: 2.5; }
+        LineTo { x: 15.5; y: 11.5; } 
+        
     }
 }
 
@@ -18,13 +47,19 @@ export component MinIcon inherits Rectangle {
     width: 20px;
     height: 20px;
 
-    Rectangle {
-        x: 4px; y: 9.5px;
-        width: 12px;
-        height: 1px;
-        border-width: 1px;
-        border-color: root.line-color;
-        background: transparent;
+    Path {
+        viewbox-x: 0;
+        viewbox-y: 0;
+        viewbox-width:20;
+        viewbox-height: 20;
+        width: 100%;
+        height: 100%;
+        stroke: root.line-color;
+        stroke-width: 1px;
+        stroke_line_cap: round;
+        
+        MoveTo { x: 4; y: 9.5; }
+        LineTo { x: 16; y: 9.5; }
     }
 }
 
@@ -40,12 +75,10 @@ export component CloseIcon inherits Rectangle {
         stroke-width: 1px;
         stroke_line_cap: round;
 
-        // 第一道杠：从左上到右下
         MoveTo { x: 2; y: 2; }
-        LineTo { x: 12; y: 12; }
+        LineTo { x: 10; y: 10; }
         
-        // 第二道杠：从右上到左下
-        MoveTo { x: 12; y: 2; }
-        LineTo { x: 2; y: 12; }
+        MoveTo { x: 10; y: 2; }
+        LineTo { x: 2; y: 10; }
     }
 }

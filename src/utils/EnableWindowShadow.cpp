@@ -1,10 +1,12 @@
 #include "EnableWindowShadow.h"
 
+
 WNDPROC EnableWindowShadow::originalWndProc = nullptr;
 
-void EnableWindowShadow::apply(HWND hwnd) {
+void EnableWindowShadow::apply(HWND hwnd, AppWindow* ui_ptr) {
     if (!hwnd) return;
-
+    m_ui = ui_ptr;
+   
     // 设置样式：保留系统功能但准备去掉标题栏
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
     SetWindowLong(hwnd, GWL_STYLE, style | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME);
@@ -16,39 +18,44 @@ void EnableWindowShadow::apply(HWND hwnd) {
     DwmExtendFrameIntoClientArea(hwnd, &margins);
 
     // 拦截窗口消息 (Subclassing)
-    originalWndProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)CustomWndProc);
+    SetWindowSubclass(hwnd, SubclassProc, 1, (DWORD_PTR)this);
+    //originalWndProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)CustomWndProc);
 
     // 刷新窗口
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 }
 
-LRESULT CALLBACK EnableWindowShadow::CustomWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK EnableWindowShadow::SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, 
+                                                 UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+
+    EnableWindowShadow* self = reinterpret_cast<EnableWindowShadow*>(dwRefData);
+
     switch (uMsg) {
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
+    case WM_SIZE:
+        if (self && self->m_ui) {
+            if (wParam == SIZE_MAXIMIZED) self->m_ui->set_is_maximized(true);
+            else if (wParam == SIZE_RESTORED) self->m_ui->set_is_maximized(false);
+        }
+        break;
+
     case WM_NCCALCSIZE:
         if (wParam) {
-        // 获取窗口位置信息
-        NCCALCSIZE_PARAMS* p = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
-        
-        // 检查窗口是否处于最大化状态
-        WINDOWPLACEMENT wp = { sizeof(WINDOWPLACEMENT) };
-        if (GetWindowPlacement(hwnd, &wp) && wp.showCmd == SW_MAXIMIZE) {
-            // 获取当前显示器的信息（考虑多显示器情况）
-            HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONULL);
-            if (hMonitor) {
-                MONITORINFO mi = { sizeof(MONITORINFO) };
-                GetMonitorInfo(hMonitor, &mi);
-                // 将客户区限制在显示器的可用工作区（rcWork 已经排除了任务栏）
-                p->rgrc[0] = mi.rcWork;
+            NCCALCSIZE_PARAMS* p = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
+            WINDOWPLACEMENT wp = { sizeof(WINDOWPLACEMENT) };
+            if (GetWindowPlacement(hwnd, &wp) && wp.showCmd == SW_MAXIMIZE) {
+                HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONULL);
+                if (hMonitor) {
+                    MONITORINFO mi = { sizeof(MONITORINFO) };
+                    GetMonitorInfo(hMonitor, &mi);
+                    p->rgrc[0] = mi.rcWork;
+                }
             }
-            }
-            return 0; //拦截默认边框计算
+            return 0;
         }
-        return 0;
+        break;
 
-    case WM_NCHITTEST: {
+    case WM_NCHITTEST:
+        {
         POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
         ScreenToClient(hwnd, &pt);
 
@@ -61,8 +68,8 @@ LRESULT CALLBACK EnableWindowShadow::CustomWndProc(HWND hwnd, UINT uMsg, WPARAM 
         };
         const int b = scale(8);     // 对应 Slint 8px 的缩放边缘
         const int titleHeight = scale(40);   // 对应 Slint 40px 的标题栏高度
-        const int buttonZone = scale(156);
-        const int btnWidth = scale(52);
+        const int buttonZone = scale(208);  // 对应 title右边4个按钮 52*4
+        const int btnWidth = scale(52); 
 
         if (!IsZoomed(hwnd)) {
             // 四角判断
@@ -88,7 +95,11 @@ LRESULT CALLBACK EnableWindowShadow::CustomWndProc(HWND hwnd, UINT uMsg, WPARAM 
 
         // 其他区域才返回客户区
         return HTCLIENT;
+        }
+        break;
+    case WM_NCDESTROY:
+        RemoveWindowSubclass(hwnd, SubclassProc, uIdSubclass);
+        break;
     }
-    }
-    return CallWindowProc(originalWndProc, hwnd, uMsg, wParam, lParam);
+    return DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }

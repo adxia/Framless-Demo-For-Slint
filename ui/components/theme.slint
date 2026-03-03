@@ -1,6 +1,35 @@
-export component Theme {
-    in-out property <color> primary: #4da3ff;
-    in-out property <color> border: #2a2a2a;
-    in-out property <color> background: #121212;
-    in-out property <length> border_width: 1px;
+
+export struct ThemeColors {
+    primary: color,
+    background: color,
+    hover_bg:color,
+    text_color: color,
+    border: color,
+    
+}
+
+export global LightTheme {
+    out property <ThemeColors> colors: {
+        primary: #5C67FA,
+        background: #ffffff,
+        hover_bg:#f1f1f1,
+        text_color: #232946,
+        border: #e0e0e0,
+    };
+}
+
+export global DarkTheme {
+    out property <ThemeColors> colors: {
+        primary: #5C67FA,
+        background: #121212,
+        hover_bg:#222222,
+        text_color: #f5f5f5,
+        border: #2a2a2a,
+    };
+}
+export global Theme {
+    in-out property <bool> is_dark: false;
+
+    // 根据布尔值，直接切换整个颜色结构体
+    out property <ThemeColors> active: is_dark ? DarkTheme.colors : LightTheme.colors;
 }
